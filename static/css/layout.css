@@ -1,8 +1,5 @@
 body{
-    background-image: url("../img/yukayuyu.jpg");
-    background-position: center;
-    background-size: 100%;
-    background-repeat: no-repeat;
+    background-color: aliceblue;
 }
 
 #msg_board {
@@ -17,9 +14,9 @@ body{
 }
 
 .single_msg{
-    font-size: 30px;
+    font-size: 20px;
     text-shadow: rebeccapurple;
-    color: white;
+    color: black;
     border-color: rebeccapurple;
     border-radius: 5px;
 }

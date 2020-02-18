@@ -1,15 +1,10 @@
-package main
+package controller
 
 import (
-	"html/template"
-	"log"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func ChatroomGet(w http.ResponseWriter, r *http.Request){
-	tmpl, _ := template.ParseFiles("./home.html")
-	err := tmpl.Execute(w,nil)
-	if err != nil{
-		log.Fatal(err)
-	}
+func ChatroomGet(c *gin.Context){
+	c.HTML(http.StatusOK, "home.html", nil)
 }
