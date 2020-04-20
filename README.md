@@ -1,2 +1,2 @@
-# UniqueStudioIM
-for an im task
+# THchat
+当作聊天室练习
