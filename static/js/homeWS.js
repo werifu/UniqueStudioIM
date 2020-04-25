@@ -1,5 +1,5 @@
 window.onload = function () {
-    var conn = new WebSocket("ws://"+document.location.host + "/ws"), input_msg = document.getElementById("input_msg");
+    var conn = new WebSocket("ws://"+document.location.host + "/room/" + "1" + "/ws"), input_msg = document.getElementById("input_msg");
 
 
     var appendMSG = function(str) {

@@ -2,28 +2,24 @@ package model
 
 import (
 	"fmt"
-	"im/pkg/setting"
-	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
+	"im/pkg/setting"
 	"log"
 )
 
-//定义用户
-type User struct {
-	gorm.Model
-
-	Username 	string	`gorm:"size:32;unique;not null;unique"`		// 改变默认长度（size）,非空, 唯一
-	Password	string	`gorm:"size:32;not null"`
-
+// 自定义model
+type Model struct {
+	ID int 				`gorm:"primary_key" json:"id"`
+	CreatedOn int 		`json:"created_on"`
+	ModifiedOn int 		`json:"modified_on"`
 }
 
-type Room struct {
-	gorm.Model
 
-	Name 		string	`gorm:"size:16;unique;not null;unique"`		// 改变默认长度（size）,非空, 唯一
-	Password	int
 
-}
+var (
+	db *gorm.DB
+)
 
 func init() {
 	sec, err := setting.Cfg.GetSection("database")
@@ -38,7 +34,7 @@ func init() {
 	host := sec.Key("host").String()
 	tablePrefix := sec.Key("table_frefix").String()
 
-	db, err := gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		user,
 		password,
 		host,
