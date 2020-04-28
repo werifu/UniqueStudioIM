@@ -15,4 +15,5 @@ const(
 	ErrAuthToken = 20003
 	ErrAuth = 20004
 
+	ErrUserExists = 30001
 )

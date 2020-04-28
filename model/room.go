@@ -6,7 +6,7 @@ type Room struct {
 	Name 		string			`gorm:"size:16;unique;not null;unique" json:"name"`		// 改变默认长度（size）,非空, 唯一
 	Password	string
 	CreatedBy	User
-	Hub			*Hub `gorm:"-"`
+	Hub			*Hub 			`gorm:"-"`
 }
 
 //获得各房间数据
@@ -31,4 +31,3 @@ func NewRoom(hub *Hub, password, name string, creator User) *Room {
 		Hub:       hub,
 	}
 }
-

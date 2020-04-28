@@ -6,5 +6,5 @@ import (
 )
 
 func ChatroomGet(c *gin.Context){
-	c.HTML(http.StatusOK, "home.html", nil)
+	c.HTML(http.StatusOK, "room.tmpl", nil)
 }

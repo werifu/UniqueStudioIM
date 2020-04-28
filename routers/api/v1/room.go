@@ -10,7 +10,7 @@ import (
 
 // 进入房间
 func GetRoom(c *gin.Context) {
-	c.HTML(http.StatusOK, "home.html", nil)
+	c.HTML(http.StatusOK, "room.tmpl", nil)
 }
 
 // 创建房间

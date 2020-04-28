@@ -10,6 +10,7 @@ var MsgFlags = map[int]string {
 	ErrAuthCheckTokenTimeout : "Token已超时",
 	ErrAuthToken : "Token生成失败",
 	ErrAuth : "Token错误",
+	ErrUserExists : "用户已存在",
 }
 
 func GetErrMsg(code int) string {
