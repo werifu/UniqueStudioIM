@@ -16,6 +16,7 @@ var (
 	WriteTimeout time.Duration
 
 	JwtSecret string
+	TokenLife time.Duration
 )
 
 
@@ -27,7 +28,7 @@ func init(){
 	}
 	LoadBase()
 	LoadServer()
-
+	LoadJWT()
 }
 
 func LoadBase(){
@@ -47,3 +48,11 @@ func LoadServer(){
 	WriteTimeout = time.Duration(sec.Key("write_timeout").MustInt(60)) * time.Second
 }
 
+func LoadJWT() {
+	sec, err := Cfg.GetSection("jwt")
+	if err != nil{
+		log.Fatalf("fail to get section 'jwt':%s", err)
+	}
+
+	TokenLife = time.Duration(sec.Key("token_life").MustInt(60)) * time.Minute
+}
