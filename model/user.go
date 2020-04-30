@@ -1,6 +1,7 @@
 package model
 
 import (
+	"im/pkg/e"
 	"time"
 )
 
@@ -41,3 +42,17 @@ func UserExists(username string) bool {
 	return false
 }
 
+func LoginCheck(username, password string) int {
+	user := User{}
+	db.Where("username = ?", username).Select("username, password").First(&user)
+
+	if user.Username == username {
+		if user.Password == password {
+			return e.SUCCESS
+		} else {
+			return e.ErrUserPassword
+		}
+	} else {
+		return e.ErrUserNotExists
+	}
+}

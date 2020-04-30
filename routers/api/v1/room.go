@@ -1,34 +1,51 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"im/model"
+	"im/pkg/util"
 	"log"
 	"net/http"
 )
 
+
 // 进入房间
 func GetRoom(c *gin.Context) {
-	c.HTML(http.StatusOK, "room.tmpl", nil)
+	roomName := c.Param("name")
+	if _, ok := model.Rooms[roomName]; ok {
+		c.HTML(http.StatusOK, "room.tmpl", nil)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "房间不存在"})
+	}
 }
 
-// 创建房间
-func CreateRoom(c *gin.Context) {
-	password := c.Query("password")
 
-	name := c.Query("name")
+func GetCreateRoom(c *gin.Context) {
+	c.HTML(http.StatusOK, "newroom.tmpl", nil)
+}
+
+// post创建房间
+func PostCreateRoom(c *gin.Context) {
+	password := c.PostForm("password")
+	roomName := c.PostForm("room_name")
+
+	// 判断房间是否已经存在
+	if _, ok := model.Rooms[roomName]; ok {
+		c.JSON(http.StatusOK, gin.H{"message": "房间名已被占用"})
+		return
+	}
 
 	//让大水管跑起来
 	var hub = model.NewHub()
 	go hub.Run()
 
-	var room = model.NewRoom(hub, password, name, model.User{})
+	creatorName := util.GetSessionUsername(c)
+
+	var room = model.NewRoom(hub, password, roomName, &model.User{Username:creatorName})
 
 	//注册到房间名单里
-	fmt.Println(room)
 	model.Rooms[room.Name] = room
-	log.Println("房间创建成功：", room.Name)
+	log.Printf("房间创建成功：name:%s; psw:%s", room.Name, password)
 
 }
 

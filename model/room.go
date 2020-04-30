@@ -5,7 +5,7 @@ type Room struct {
 
 	Name 		string			`gorm:"size:16;unique;not null;unique" json:"name"`		// 改变默认长度（size）,非空, 唯一
 	Password	string
-	CreatedBy	User
+	CreatedBy	*User
 	Hub			*Hub 			`gorm:"-"`
 }
 
@@ -22,7 +22,7 @@ func GetRoomTotal(maps interface{}) (count int) {
 	return
 }
 
-func NewRoom(hub *Hub, password, name string, creator User) *Room {
+func NewRoom(hub *Hub, password, name string, creator *User) *Room {
 	return &Room{
 		Model:     Model{},
 		Name:      name,

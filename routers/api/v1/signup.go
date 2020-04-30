@@ -4,7 +4,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"im/model"
-	"im/pkg/err"
+	"im/pkg/e"
 	"log"
 	"net/http"
 )
@@ -21,22 +21,29 @@ func PostSignup(c *gin.Context) {
 	valid.Required(password, "password").Message("密码不能为空")
 	valid.Range(password,5, 40, "password").Message("密码长度在5到40个字符长度区间")
 
+	if valid.HasErrors() {
+		for _, err := range valid.Errors {
+			log.Println(err.Key, err.Message)
+		}
+	}
+
+
 	var code int
 	if model.UserExists(username) {
 		log.Println(username)
-		code = err.ErrUserExists
+		code = e.ErrUserExists
 	} else {
 		model.AddUser(username, password)
-		code = err.SUCCESS
+		code = e.SUCCESS
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
-		"msg": err.GetErrMsg(code),
+		"msg": e.GetErrMsg(code),
 	})
 
 }
 
 func GetSignup(c *gin.Context) {
-	c.HTML(http.StatusOK, "signup.tmpl", gin.H{})
+	c.HTML(http.StatusOK, "signup.tmpl", gin.H{"title": "注册"})
 }

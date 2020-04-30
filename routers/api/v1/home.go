@@ -9,6 +9,7 @@ import (
 //	Rooms map[string]*model.Room
 //}
 
+
 //获取首页房间等的信息
 func GetHome(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.tmpl", gin.H{
@@ -16,6 +17,3 @@ func GetHome(c *gin.Context) {
 	})
 }
 
-func NewRoomAPI(c *gin.Context) {
-	c.HTML(http.StatusOK, "home1.tmpl", nil)
-}

@@ -1,7 +1,10 @@
 package routers
 
 import (
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"im/middleware"
 	"im/model"
 	"im/pkg/setting"
 	v1 "im/routers/api/v1"
@@ -17,14 +20,24 @@ func InitRouter() *gin.Engine{
 
 	router.LoadHTMLGlob("tmpl/*")
 	router.Static("/static", "./static")
+
+	// 设置session
+	store := cookie.NewStore([]byte("loginUser"))
+	router.Use(sessions.Sessions("mysession", store))
+
+
 	apiv1 := router.Group("/api/v1")
 	{
 		apiv1.GET("/", v1.GetHome)
-		apiv1.GET("/newroom", v1.NewRoomAPI)
+
+
 		//进入房间
-		apiv1.GET("/room/:name", v1.GetRoom)
+		apiv1.GET("/room/:name", middleware.LoginValid(v1.GetRoom))
+
 		//新建房间
-		apiv1.POST("/room/", v1.CreateRoom)
+		apiv1.GET("/newroom", middleware.LoginValid(v1.GetCreateRoom))
+		apiv1.POST("/newroom", middleware.LoginValid(v1.PostCreateRoom))
+
 		//更新房间信息
 		apiv1.PUT("/room/:name", v1.EditRoom)
 		//删除指定房间
@@ -37,7 +50,7 @@ func InitRouter() *gin.Engine{
 		apiv1.POST("/signup", v1.PostSignup)
 
 		//控制协议升级
-		router.GET("room/:name/ws", func(c *gin.Context){
+		apiv1.GET("/room/:name/ws", func(c *gin.Context){
 			model.SearchRoomWS(c)
 		})
 	}

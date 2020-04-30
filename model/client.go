@@ -22,9 +22,10 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	hub *Hub
-	conn *websocket.Conn
-	send chan []byte
+	hub 	*Hub
+	conn 	*websocket.Conn
+	send 	chan []byte
+	user 	*User
 }
 
 func (c *Client)SetPong(){
@@ -89,7 +90,7 @@ func (c *Client)ReadFromHub(){
 			case <-ticker.C:
 				err := c.conn.WriteMessage(websocket.PingMessage, nil)
 				if err != nil{
-					log.Println("tick err:", err)
+					log.Println("tick e:", err)
 					}
 		}
 	}

@@ -1,5 +1,13 @@
 window.onload = function () {
-    var conn = new WebSocket("ws://"+document.location.host + "/room/" + "1" + "/ws"), input_msg = document.getElementById("input_msg");
+    var room_name;
+    var get_room_name = function (){
+        var url = document.location.toString().split("/room/").slice(-1);
+        room_name = url;
+        return room_name
+    };
+
+    var conn = new WebSocket("ws://" + document.location.host + "/api/v1/room/"  + get_room_name() + "/ws"), input_msg = document.getElementById("input_msg");
+
 
 
     var appendMSG = function(str) {

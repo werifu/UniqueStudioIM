@@ -4,6 +4,7 @@ import (
 	"log"
 )
 
+
 type Hub struct {
 	//记录在场的客户端
 	clients map[*Client]bool
@@ -16,6 +17,10 @@ type Hub struct {
 
 	//注销请求
 	unregister chan *Client
+
+	//关闭水管请求,接收到false时关闭
+	stop  	   chan bool
+
 }
 
 func NewHub() *Hub{
@@ -24,6 +29,7 @@ func NewHub() *Hub{
 		clients: 	make(map[*Client]bool),
 		register:	make(chan *Client),
 		unregister:	make(chan *Client),
+		stop:		make(chan bool),
 	}
 }
 
@@ -42,7 +48,17 @@ func (h *Hub) Run(){
 			for c, _ := range h.clients {
 				c.send <- msg		//把消息注入各个客户端的连接里
 			}
+		case stop := <-h.stop:
+			if stop == false {
+				for client := range h.clients {
+					h.unregister <- client
+				}
+				return
+			}
 		}
 	}
 }
 
+func (h *Hub) Stop(){
+	h.stop <- false
+}

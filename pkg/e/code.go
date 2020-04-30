@@ -1,4 +1,4 @@
-package err
+package e
 
 // 错误代码包
 
@@ -8,7 +8,7 @@ const(
 	ERROR = 500
 
 	ErrNotExistRoom = 10001
-
+	ErrRoomPassword = 10002
 
 	ErrAuthCheckTokenFail = 20001
 	ErrAuthCheckTokenTimeout = 20002
@@ -16,4 +16,7 @@ const(
 	ErrAuth = 20004
 
 	ErrUserExists = 30001
-)
+	ErrUserNotExists = 30002
+	ErrUserPassword = 30003
+
+	)
