@@ -26,6 +26,7 @@ func GetCreateRoom(c *gin.Context) {
 
 // post创建房间
 func PostCreateRoom(c *gin.Context) {
+
 	password := c.PostForm("password")
 	roomName := c.PostForm("room_name")
 
@@ -46,7 +47,6 @@ func PostCreateRoom(c *gin.Context) {
 	//注册到房间名单里
 	model.Rooms[room.Name] = room
 	log.Printf("房间创建成功：name:%s; psw:%s", room.Name, password)
-
 }
 
 // 修改房间信息
@@ -56,5 +56,16 @@ func EditRoom(c *gin.Context) {
 
 //删除房间
 func DeleteRoom(c *gin.Context) {
+	roomName := c.Param("name")
 
+	username := util.GetSessionUsername(c)
+
+	if room, ok := model.Rooms[roomName]; ok {
+		if room.CreatedBy.Username == username {
+			delete(model.Rooms, roomName)
+			room.Delete()
+		} else {
+			c.JSON(http.StatusForbidden, gin.H{"message": "权限不足"})
+		}
+	}
 }

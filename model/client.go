@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/gorilla/websocket"
 	"html/template"
+	"im/pkg/logging"
 	"log"
 	"time"
 )
@@ -57,7 +58,7 @@ func (c *Client)PumpToHub(){
 			log.Println("One connection closed.")
 			break
 		}
-		log.Println(string(msg))
+		logging.Info("聊天", string(msg))
 		c.hub.broadcast <- msg
 
 	}

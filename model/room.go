@@ -31,3 +31,8 @@ func NewRoom(hub *Hub, password, name string, creator *User) *Room {
 		Hub:       hub,
 	}
 }
+
+func (room *Room) Delete() {
+	room.Hub.Stop()
+
+}

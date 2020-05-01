@@ -48,9 +48,10 @@ func (h *Hub) Run(){
 			for c, _ := range h.clients {
 				c.send <- msg		//把消息注入各个客户端的连接里
 			}
-		case stop := <-h.stop:
+		case stop := <-h.stop:		// 关闭水管
 			if stop == false {
 				for client := range h.clients {
+					h.broadcast <- []byte("群主已解散该聊天室")
 					h.unregister <- client
 				}
 				return
@@ -58,6 +59,7 @@ func (h *Hub) Run(){
 		}
 	}
 }
+
 
 func (h *Hub) Stop(){
 	h.stop <- false

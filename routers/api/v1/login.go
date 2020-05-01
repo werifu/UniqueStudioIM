@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"im/model"
 	"im/pkg/e"
+	"im/pkg/logging"
 	"log"
 	"net/http"
 )
@@ -17,7 +18,7 @@ func GetLogin(c *gin.Context) {
 func PostLogin(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	log.Println("登录：username:",username, ";password:", password)
+	logging.Info("登录：username:",username, ";password:", password)
 
 	valid := validation.Validation{}
 	valid.Required(username, "name").Message("名称不能为空")
