@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"im/model"
+	"im/pkg/e"
 	"im/pkg/util"
 	"log"
 	"net/http"
@@ -14,8 +15,9 @@ func GetRoom(c *gin.Context) {
 	roomName := c.Param("name")
 	if _, ok := model.Rooms[roomName]; ok {
 		c.HTML(http.StatusOK, "room.tmpl", nil)
+		//c.JSON(e.SUCCESS, gin.H{"message": "ok"})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"message": "房间不存在"})
+		c.JSON(http.StatusOK, gin.H{"msgCode": e.ErrNotExistRoom, "message": e.MsgFlags[e.ErrNotExistRoom]})
 	}
 }
 
@@ -32,9 +34,10 @@ func PostCreateRoom(c *gin.Context) {
 
 	// 判断房间是否已经存在
 	if _, ok := model.Rooms[roomName]; ok {
-		c.JSON(http.StatusOK, gin.H{"message": "房间名已被占用"})
+		c.JSON(http.StatusOK, gin.H{"msgCode": e.ErrRoomExists, "message": e.MsgFlags[e.ErrRoomExists]})
 		return
 	}
+
 
 	//让大水管跑起来
 	var hub = model.NewHub()
@@ -47,6 +50,7 @@ func PostCreateRoom(c *gin.Context) {
 	//注册到房间名单里
 	model.Rooms[room.Name] = room
 	log.Printf("房间创建成功：name:%s; psw:%s", room.Name, password)
+	c.JSON(e.SUCCESS, "创建房间成功")
 }
 
 // 修改房间信息

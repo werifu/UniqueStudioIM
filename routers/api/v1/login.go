@@ -31,12 +31,12 @@ func PostLogin(c *gin.Context) {
 		for _, err := range valid.Errors {
 			log.Println(err.Key, err.Message)
 		}
-		c.JSON(http.StatusOK, gin.H{"code": 0, "message": "输入不符合规范"})
+		c.JSON(http.StatusOK, gin.H{"code": e.ErrFormat, "message": "输入不符合规范"})
 	}
 
 	checkCode := model.LoginCheck(username, password)
 	if checkCode != e.SUCCESS {
-		c.JSON(http.StatusOK, gin.H{"code": 0, "message": "用户名/密码错误"})
+		c.JSON(http.StatusOK, gin.H{"code": e.ErrAuth, "message": "用户名/密码错误"})
 	} else {
 
 		session := sessions.Default(c)
@@ -46,7 +46,7 @@ func PostLogin(c *gin.Context) {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, gin.H{"code": 200, "message": "登录成功"})
+		c.JSON(http.StatusOK, gin.H{"code": e.SUCCESS, "message": "登录成功"})
 	}
 
 

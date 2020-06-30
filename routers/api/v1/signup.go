@@ -12,8 +12,9 @@ import (
 func PostSignup(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
+	repassword := c.PostForm("repassword")
 
-	log.Println("注册参数：", username, password)
+	log.Println("注册参数：", username, password, repassword)
 
 	valid := validation.Validation{}
 	valid.Required(username, "name").Message("名称不能为空")
@@ -22,9 +23,12 @@ func PostSignup(c *gin.Context) {
 	valid.Range(password,5, 40, "password").Message("密码长度在5到40个字符长度区间")
 
 	if valid.HasErrors() {
+		var msg []string
 		for _, err := range valid.Errors {
 			log.Println(err.Key, err.Message)
+			msg = append(msg, err.Message)
 		}
+		c.JSON(http.StatusExpectationFailed, gin.H{"msgs": msg})
 	}
 
 

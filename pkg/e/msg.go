@@ -8,6 +8,7 @@ var MsgFlags = map[int]string {
 
 	ErrNotExistRoom : "不存在该房间",
 	ErrRoomPassword : "房间密码错误",
+	ErrRoomExists : "房间已被占用",
 
 	ErrAuthCheckTokenFail : "Token鉴权失败",
 	ErrAuthCheckTokenTimeout : "Token已超时",

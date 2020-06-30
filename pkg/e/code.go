@@ -9,6 +9,7 @@ const(
 
 	ErrNotExistRoom = 10001
 	ErrRoomPassword = 10002
+	ErrRoomExists = 10003
 
 	ErrAuthCheckTokenFail = 20001
 	ErrAuthCheckTokenTimeout = 20002
@@ -19,4 +20,5 @@ const(
 	ErrUserNotExists = 30002
 	ErrUserPassword = 30003
 
+	ErrFormat = 40001
 	)

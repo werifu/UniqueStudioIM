@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"im/model"
 	"net/http"
 )
 
@@ -12,8 +13,13 @@ import (
 
 //获取首页房间等的信息
 func GetHome(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+	var roomNames string
+	for _, room := range model.Rooms {
+		roomNames += room.Name
+	}
+	c.JSON(http.StatusOK, gin.H{
 		"title": "首页",
+		"rooms": roomNames,
 	})
 }
 
