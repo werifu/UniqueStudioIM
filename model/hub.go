@@ -1,7 +1,7 @@
 package model
 
 import (
-	"log"
+	"thchat/pkg/logging"
 )
 
 
@@ -38,7 +38,7 @@ func (h *Hub) Run(){
 		select {
 		case c := <-h.register:	//有新连接注册进来
 			h.clients[c] = true
-			log.Println("新连接注册")
+			logging.Info("新连接注册")
 		case c := <-h.unregister:
 			if _, ok := h.clients[c];ok{		//用户表里确实有注销用户
 				delete(h.clients, c)

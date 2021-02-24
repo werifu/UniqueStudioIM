@@ -1,10 +1,12 @@
 package util
 
 import (
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"log"
 )
+
 
 func IsLogin(c *gin.Context) bool {
 	session := sessions.Default(c)
@@ -22,6 +24,7 @@ func GetSessionUsername(c *gin.Context) string {
 	loginUser := session.Get("loginUser")
 
 	if loginUser == nil {
+		fmt.Println("未登录")
 		return ""
 	}
 	return loginUser.(string)

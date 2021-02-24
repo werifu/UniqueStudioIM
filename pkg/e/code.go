@@ -21,4 +21,6 @@ const(
 	ErrUserPassword = 30003
 
 	ErrFormat = 40001
+
+	NotLogin = 50001
 	)

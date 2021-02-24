@@ -1,9 +1,10 @@
 package model
 
 import (
-	"im/pkg/e"
+	"thchat/pkg/e"
 	"time"
 )
+
 
 //定义用户
 type User struct {

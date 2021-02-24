@@ -19,6 +19,8 @@ var MsgFlags = map[int]string {
 	ErrUserNotExists : "用户不存在",
 	ErrUserPassword : "用户密码错误",
 
+	NotLogin: "未登录",
+
 }
 
 func GetErrMsg(code int) string {

@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type Room struct {
 	Model
 
@@ -9,22 +11,12 @@ type Room struct {
 	Hub			*Hub 			`gorm:"-"`
 }
 
-//获得各房间数据
-//注:函数尾部已经 声明了返回变量，所以return可以不带变量
-func GetRooms(maps interface{}) (rooms []Room) {
-	db.Where(maps).Find(&rooms)
-	return
-}
-
-//获得房间数量
-func GetRoomTotal(maps interface{}) (count int) {
-	db.Model(&Room{}).Where(maps).Count(&count)
-	return
-}
 
 func NewRoom(hub *Hub, password, name string, creator *User) *Room {
 	return &Room{
-		Model:     Model{},
+		Model:     Model{
+			CreatedAt: time.Now(),
+		},
 		Name:      name,
 		password:  password,
 		CreatedBy: creator,

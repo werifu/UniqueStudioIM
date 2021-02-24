@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"html/template"
-	"im/pkg/logging"
-	"log"
+	"net/http"
+	"thchat/pkg/logging"
 	"time"
 )
 
@@ -21,6 +21,9 @@ const (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 type Client struct {
@@ -35,7 +38,7 @@ func (c *Client)SetPong(){
 	//超过该时间就断开连接
 	err := c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	if err != nil{
-		log.Println("SetDDL:",err)
+		logging.Error("SetDDL failed:",err)
 	}
 
 	//听ping（不用发pong
@@ -56,7 +59,7 @@ func (c *Client)PumpToHub(){
 	for{
 		_, msg, err := c.conn.ReadMessage()
 		if err != nil{
-			log.Println("One connection closed.")
+			logging.Info("One connection closed.")
 			break
 		}
 		logging.Info(fmt.Sprintf("%s: %s", c.user.Username, string(msg)))
@@ -80,20 +83,20 @@ func (c *Client)ReadFromHub(){
 				//写入conn的writer
 				w, err := c.conn.NextWriter(websocket.TextMessage)
 				if err != nil{
-					log.Println("next writer:",err)
+					logging.Error("next writer:",err)
 				}
 				//过滤输入
 				template.HTMLEscape(w, msg)
 				err = w.Close()
 				if err != nil{
-					log.Println("w close:",err)
+					logging.Error("w close failed:",err)
 					}
 
 			//保持心跳(hub发ping到客户端
 			case <-ticker.C:
 				err := c.conn.WriteMessage(websocket.PingMessage, nil)
 				if err != nil{
-					log.Println("tick e:", err)
+					logging.Error("tick e:", err)
 					}
 		}
 	}
