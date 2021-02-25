@@ -2,17 +2,13 @@ package v1
 
 import (
 	"github.com/astaxie/beego/validation"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"thchat/model"
 	"thchat/pkg/e"
 	"thchat/pkg/logging"
+	"thchat/pkg/util"
 )
-
-func GetLogin(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.tmpl", gin.H{"title":"登录"})
-}
 
 func PostLogin(c *gin.Context) {
 	username := c.PostForm("username")
@@ -31,31 +27,21 @@ func PostLogin(c *gin.Context) {
 			logging.Error(err.Key, err.Message)
 		}
 		c.JSON(http.StatusOK, gin.H{"code": e.ErrFormat, "message": "输入不符合规范"})
+		return
 	}
 
 	checkCode := model.LoginCheck(username, password)
 	if checkCode != e.SUCCESS {
 		c.JSON(http.StatusOK, gin.H{"code": e.ErrAuth, "message": "用户名/密码错误"})
-	} else {
-
-		session := sessions.Default(c)
-		session.Options(sessions.Options{
-			Path:     "/",
-			Domain:   "",
-			MaxAge:   3600,
-			Secure: false,
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
-		})
-		session.Set("loginUser", username)
-
-		err := session.Save()
-
-		if err != nil {
-			logging.Error(err)
-		}
-		c.JSON(http.StatusOK, gin.H{"code": e.SUCCESS, "message": "登录成功", "username": username})
+		return
 	}
+	err := util.SetSession(c, username)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": e.ERROR, "message": "无法设置session"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"code": e.SUCCESS, "message": "登录成功", "username": username})
+
 
 }
 

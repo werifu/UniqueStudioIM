@@ -6,13 +6,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
-	"strings"
 	"thchat/pkg/config"
 	"thchat/pkg/e"
+	"thchat/pkg/util"
 )
 type GithubUser struct {
 	Login	string	`json:"login"`
 	Email 	string	`json:"email"`
+}
+
+type AccessTokenResponse struct{
+	AccessToken		string	`json:"access_token"`
+	Scope  			string	`json:"scope"`
+	TokenType 		string	`json:"token_type"`
 }
 
 func RequestGithubAccessToken(code string) (string, error) {
@@ -20,8 +26,14 @@ func RequestGithubAccessToken(code string) (string, error) {
 		config.AppConfig.Oauth.GithubClientID,
 		config.AppConfig.Oauth.GithubClientSecret,
 		code)
-	//fmt.Println(url)
-	res, err := http.Post(url, "text/plain", nil)
+
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Add("Accept", "application/json")
+
+	res, err := (&http.Client{}).Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -29,14 +41,18 @@ func RequestGithubAccessToken(code string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	accessToken := res2token(bodyBytes)
+	jsonRes := AccessTokenResponse{}
+	err = json.Unmarshal(bodyBytes, &jsonRes)
+	if err != nil {
+		return "", err
+	}
+	accessToken := jsonRes.AccessToken
 
 	return accessToken, nil
 }
 
 func OauthGithub(c *gin.Context) {
 	code, ok := c.GetPostForm("code")
-
 	if !ok || code == "" {
 		c.JSON(http.StatusOK, gin.H{"code": e.ErrAuth, "message": "oauth code error"})
 		return
@@ -46,14 +62,18 @@ func OauthGithub(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": e.ErrAuth, "message": "Cannot request a github access token."})
 		return
 	}
+	//fmt.Println("get token:\t"+token)
 	userInfo, err := RequestGithubUser(token)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": e.ErrAuthToken, "message": "Cannot get github user info"})
 		return
 	}
 	username := userInfo.Login
-	fmt.Println(username)
-
+	err = util.SetSession(c, username)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": e.ERROR, "message": "Setting sessions failed"})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"code": e.SUCCESS, "message": "get access token ok"})
 }
 
@@ -64,8 +84,16 @@ func GithubOauthCallback(c *gin.Context) {
 
 func RequestGithubUser(token string) (GithubUser, error){
 	githubUser := GithubUser{}
-	url := fmt.Sprintf("https://api.github.com/user?access_token=%s", token)
-	res, err := http.Get(url)
+	url := "https://api.github.com/user"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return githubUser, err
+	}
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("token %s", token))
+
+	res, err := (&http.Client{}).Do(req)
 	if err != nil {
 		return githubUser, err
 	}
@@ -73,7 +101,7 @@ func RequestGithubUser(token string) (GithubUser, error){
 	if err != nil {
 		return githubUser, err
 	}
-	fmt.Println(string(bodyBytes))
+	//fmt.Println(string(bodyBytes))
 	err = json.Unmarshal(bodyBytes, &githubUser)
 	if err != nil {
 		return githubUser, err
@@ -81,8 +109,3 @@ func RequestGithubUser(token string) (GithubUser, error){
 	return githubUser, nil
 }
 
-
-func res2token(body []byte) string {
-	bodyString := string(body)
-	return strings.Split(strings.Split(bodyString, "&")[0], "=")[1]
-}

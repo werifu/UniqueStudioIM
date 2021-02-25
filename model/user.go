@@ -2,6 +2,7 @@ package model
 
 import (
 	"thchat/pkg/e"
+	"thchat/pkg/util"
 	"time"
 )
 
@@ -11,7 +12,7 @@ type User struct {
 	Model
 
 	Username 	string	`gorm:"size:32;unique;not null;unique"`		// 改变默认长度（size）,非空, 唯一
-	Password	string	`gorm:"size:32;not null"`
+	Password	string	`gorm:"size:1024;not null"`
 }
 
 func (User) TableName() string {
@@ -20,6 +21,7 @@ func (User) TableName() string {
 
 // 插入User表
 func AddUser(username, password string) bool {
+	password = util.StringSha256(password)
 	user := User{
 		Model:    Model{
 			ModifiedAt: time.Now(),
@@ -35,7 +37,6 @@ func AddUser(username, password string) bool {
 func UserExists(username string) bool {
 	user := User{}
 	db.Where("username = ?", username).First(&user)
-
 	if user.Username == username {
 		return true
 	}
@@ -46,9 +47,8 @@ func UserExists(username string) bool {
 func LoginCheck(username, password string) int {
 	user := User{}
 	db.Where("username = ?", username).Select("username, password").First(&user)
-
 	if user.Username == username {
-		if user.Password == password {
+		if user.Password == util.StringSha256(password) {
 			return e.SUCCESS
 		} else {
 			return e.ErrUserPassword

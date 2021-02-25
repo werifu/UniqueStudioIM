@@ -54,7 +54,6 @@ func InitRouter() *gin.Engine{
 		apiv1.DELETE("/room/:name", v1.DeleteRoom)
 
 		//登录注册
-		apiv1.GET("/login", v1.GetLogin)
 		apiv1.POST("/login", v1.PostLogin)
 		apiv1.POST("/oauth/github", v1.OauthGithub)
 
