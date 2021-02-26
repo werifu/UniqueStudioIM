@@ -77,8 +77,12 @@ func DeleteRoom(c *gin.Context) {
 		if room.CreatedBy.Username == username {
 			delete(model.Rooms, roomName)
 			room.Delete()
+			c.JSON(http.StatusOK, gin.H{"code": e.SUCCESS, "message": "已删除"})
+			return
 		} else {
-			c.JSON(http.StatusForbidden, gin.H{"message": "权限不足"})
+			c.JSON(http.StatusForbidden, gin.H{"code": e.ErrAuth, "message": "权限不足"})
+			return
 		}
 	}
+	c.JSON(http.StatusForbidden, gin.H{"code": e.ErrNotExistRoom, "message": "无该房间"})
 }

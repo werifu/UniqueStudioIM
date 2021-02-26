@@ -21,7 +21,6 @@ type Config struct {
 		Password		string  `yaml:"password"`
 		Host 			string  `yaml:"host"`
 		Name 			string  `yaml:"name"`
-		TablePrefix		string  `yaml:"table_prefix"`
 	}
 	Oauth struct{
 		GithubClientID 		string  `yaml:"github_client_id"`

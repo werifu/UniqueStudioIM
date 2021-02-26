@@ -26,7 +26,7 @@ func RequestGithubAccessToken(code string) (string, error) {
 		config.AppConfig.Oauth.GithubClientID,
 		config.AppConfig.Oauth.GithubClientSecret,
 		code)
-
+	fmt.Println(url)
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		return "", err
@@ -47,7 +47,7 @@ func RequestGithubAccessToken(code string) (string, error) {
 		return "", err
 	}
 	accessToken := jsonRes.AccessToken
-
+	fmt.Println(accessToken)
 	return accessToken, nil
 }
 
@@ -74,7 +74,7 @@ func OauthGithub(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": e.ERROR, "message": "Setting sessions failed"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"code": e.SUCCESS, "message": "get access token ok"})
+	c.JSON(http.StatusOK, gin.H{"code": e.SUCCESS, "message": "get access token ok", "username": username})
 }
 
 func GithubOauthCallback(c *gin.Context) {

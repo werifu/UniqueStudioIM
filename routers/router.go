@@ -60,6 +60,8 @@ func InitRouter() *gin.Engine{
 		apiv1.GET("/signup", v1.GetSignup)
 		apiv1.POST("/signup", v1.PostSignup)
 
+		//状态
+		apiv1.GET("/status", v1.GetStatus)
 
 		//控制协议升级
 		apiv1.GET("/room/:name/ws", func(c *gin.Context){

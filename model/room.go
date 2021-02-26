@@ -34,5 +34,4 @@ func (room *Room) EditName(newName string) {
 
 func (room *Room) Delete() {
 	room.Hub.Stop()
-
 }
