@@ -27,6 +27,7 @@ func init(){
 	password := config.AppConfig.DataBase.Password
 	host := config.AppConfig.DataBase.Host
 	var err error
+	//fmt.Println(host)
 	db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		user,
 		password,
@@ -34,6 +35,7 @@ func init(){
 		dbName))
 	if err != nil {
 		logging.Error(err)
+		panic(err)
 	}
 	//初始化表格
 	if !db.HasTable("users") {

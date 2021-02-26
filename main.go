@@ -10,6 +10,6 @@ func main(){
 	router := routers.InitRouter()
 	err := router.Run(":8000")
 	if err != nil{
-		log.Println("engine start:", err)
+		log.Println("engine star	t:", err)
 	}
 }

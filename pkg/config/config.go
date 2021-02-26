@@ -2,8 +2,8 @@ package config
 
 import (
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"log"
-	"os"
 )
 
 var AppConfig = LoadConfig()
@@ -31,7 +31,7 @@ type Config struct {
 
 func LoadConfig() Config {
 	var config Config
-	fp, err:=os.ReadFile("config/config.yml")
+	fp, err:=ioutil.ReadFile("config/config.yml")
 	if err != nil{
 		log.Println(err)
 	}

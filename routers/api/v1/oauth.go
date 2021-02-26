@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"thchat/pkg/config"
 	"thchat/pkg/e"
@@ -37,7 +37,7 @@ func RequestGithubAccessToken(code string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	bodyBytes, err := io.ReadAll(res.Body)
+	bodyBytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return "", err
 	}
@@ -97,7 +97,7 @@ func RequestGithubUser(token string) (GithubUser, error){
 	if err != nil {
 		return githubUser, err
 	}
-	bodyBytes, err := io.ReadAll(res.Body)
+	bodyBytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return githubUser, err
 	}
